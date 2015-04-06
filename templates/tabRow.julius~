@@ -1,0 +1,18 @@
+<table id="tabTable">
+    <tbody>
+        <tr>
+            <td id="tabTd">
+                <a ."tabClassArrow" id="tabLeft" onclick="previousTab();"><-
+                $forall Entity _ ws <- wsList
+                    $if currentWs == unpack (workspaceName ws)
+                        <a ."tabClassActive" href=@{WsR $ workspaceName ws}>#{workspaceName ws}
+                    $else
+                        <a ."tabClass" href=@{WsR $ workspaceName ws}>#{workspaceName ws}
+                <a ."tabClassArrow" id="tabRight" onclick="nextTab();">->
+            <td>
+                <a id="logoutLink" href=@{LogoutR}>Logout
+                <a id="myUserLink" href=@{MyUserR}>My Profile
+                <a id="newWsLink" href=@{NewWsR}>New Workspace
+                $if role == "Admin"
+                    <a id="newUserLink" href=@{NewUserR}>New User
+                <a id="homeLink" href=@{HomeR}>Home

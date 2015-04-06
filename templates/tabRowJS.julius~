@@ -1,0 +1,1 @@
+document.getElementById("hident2").setAttribute("maxlength", "20");

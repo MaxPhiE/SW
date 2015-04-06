@@ -1,0 +1,23 @@
+    var assignmentTable = document.getElementById("assignmentTable");
+    if(assignmentTable) {
+        listOfRights = assignmentTable.getElementsByTagName("select");
+        if(listOfRights) {
+            for(var i=0; i<listOfRights.length; i++) {
+                listOfRights[i].onchange = function() {
+                    try {
+                        $.ajax ({
+                            type        : "POST",
+                            url         : "/user/" + encodeURIComponent(document.getElementById("userId").value) +
+                                          "/assign/" + this.parentNode.previousSibling.previousSibling.innerHTML +
+                                          "&" + this.value
+                        }).done(function(data) {
+                        }).fail(function(jqXHR, textStatus, errorThrown) {
+                            alert("Error: " + jqXHR.status + " - " + errorThrown + ". ");
+                        });
+                    } catch (e) {
+                        console.log("Error: " + e);
+                    }
+                }
+            }
+        }
+    }

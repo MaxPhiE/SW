@@ -1,0 +1,13 @@
+/                           HomeR           GET
+/login                      LoginR          GET POST
+/logout                     LogoutR         GET
+/newuser                    NewUserR        GET POST
+/user/#Text                 UserR           GET POST
+/user/#Text/delete          DeleteUserR     GET
+/user/#Text/assign/#Text    AssignUserR     POST
+/user/#Text/pw              ResetPasswordR  GET
+/myuser                     MyUserR         GET POST
+/newws                      NewWsR          GET POST
+/ws/#Text                   WsR             GET POST
+/ws/rest/#Text              WsRestR         GET POST
+/ws/order/#Text             WsOrderR        POST

@@ -1,0 +1,11 @@
+module Handler.My where
+
+import Import
+
+getMyR :: Handler Html
+getMyR = defaultLayout do
+    [whamlet|
+        <div>
+            Hello Max
+    |]
+

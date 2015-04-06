@@ -1,0 +1,130 @@
+    var wsId = "";
+    var right = "";
+    var status = "";
+    var assignee = "";
+    var isCtrl = false;
+    var ctrlKey = "Control" // ctrl key
+    
+    $(document).keyup(function(event) {
+        if(event.key == ctrlKey) isCtrl = false;
+    });
+    $(document).keydown(function(event) {
+        if(event.key == ctrlKey) isCtrl = true;
+        if(event.which == 71 && isCtrl == true) {
+            wsId = document.getElementById("workspaceName").value;
+            status = document.getElementById("workspaceStatus").value;
+            assignee = document.getElementById("workspaceAssignee").value;
+        
+            if(status == 1 && assignee == sessionUserId) {
+                if(confirm("The file is currently checked out to you. All your changes are lost.")) {
+                    getWsRest(wsId, "get");
+                }
+            } else {
+                getWsRest(wsId, "get");
+            }
+            return false;
+        } else if(event.which == 73 && isCtrl == true) {
+            wsId = document.getElementById("workspaceName").value;
+            postWsRest(wsId, "checkIn");
+            return false;
+        } else if(event.which == 79 && isCtrl == true) {
+            wsId = document.getElementById("workspaceName").value;
+            getWsRest(wsId, "checkOut");
+            return false;
+        } else if(event.which == 83 && isCtrl == true) {
+            wsId = document.getElementById("workspaceName").value;
+            postWsRest(wsId, "save");
+            return false;
+        }
+    });
+    
+    function getWsRest(id, action) {
+        $.ajax ({
+            type        : "GET",
+            url         : "/ws/rest/" + encodeURIComponent(id + "&" + action)
+        }).done(function(data) {
+            document.getElementById("footer").innerHTML = data.statusMsg;
+        
+            if(data.statusCode == "000") {
+                document.getElementById("noteArea").value = data.workspace.note;
+                
+                if(action == "checkOut") {
+                    document.getElementById("workspaceAssignee").value = sessionUserId;
+                    document.getElementById("workspaceStatus").value = "1";
+                    setNoteAreaEdit();
+                }
+            } else {
+                alert(data.statusMsg);
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert("Error: " + jqXHR.status + " - " + errorThrown + ". ");
+        });
+    }
+    
+    function postWsRest(id, action) {
+        $.ajax ({
+            type        : "POST",
+            url         : "/ws/rest/" + encodeURIComponent(wsId+"&"+action+"&"+document.getElementById("noteArea").value)
+        }).done(function(data) {
+            document.getElementById("footer").innerHTML = data.statusMsg;
+            
+            if(data.statusCode == "000" && action == "checkIn") {
+                document.getElementById("workspaceAssignee").value = "";
+                document.getElementById("workspaceStatus").value = "0";
+                setNoteAreaReadOnly();
+            } else if(data.statusCode != "000") {
+                alert(data.statusMsg);
+            }
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert("Error: " + jqXHR.status + " - " + errorThrown + ". ");
+        });
+    }
+    
+    function setNoteAreaReadOnly() {
+        document.getElementById("noteArea").setAttribute("readonly", "readonly");
+        document.getElementById("noteArea").style.backgroundColor = "#e6e6e6";
+        document.getElementById("noteArea").style.color = "#555555";
+        
+        var checkOutBtn = document.getElementById("checkOutSubmit");
+        if(checkOutBtn) checkOutBtn.disabled = false;
+        var checkInBtn = document.getElementById("checkInSubmit");
+        if(checkInBtn) checkInBtn.disabled = true;   
+    }
+    
+    function setNoteAreaEdit() {
+        document.getElementById("noteArea").removeAttribute("readonly");
+        document.getElementById("noteArea").style.backgroundColor = "#FFFFFF";
+        document.getElementById("noteArea").style.color = "#000000";
+        
+        var checkOutBtn = document.getElementById("checkOutSubmit");
+        if(checkOutBtn) checkOutBtn.disabled = true;
+        var checkInBtn = document.getElementById("checkInSubmit");
+        if(checkInBtn) checkInBtn.disabled = false;
+    }
+    
+    window.onload = function() {
+        right = document.getElementById("right").value;
+        status = document.getElementById("workspaceStatus").value;
+        assignee = document.getElementById("workspaceAssignee").value;
+        
+        if(right == "ReadOnly" || (status == 1 && assignee != sessionUserId) || status == 0) {
+            setNoteAreaReadOnly();
+        } else {
+            setNoteAreaEdit();
+        }
+        
+        $("textarea").keydown(function(event) {
+            if(event.key == "Tab") {
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+
+                var target = event.target;
+                var value = target.value;
+
+                target.value = value.substring(0, start) + "\t" + value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 1;
+
+                event.preventDefault();
+            }
+        });
+    }

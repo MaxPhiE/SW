@@ -1,0 +1,197 @@
+module CreateWidgets where
+
+import Import
+
+
+
+{-----------------------------------------------------------------------------
+ -----------------------------------------------------------------------------
+ - html widgets --------------------------------------------------------------
+ -----------------------------------------------------------------------------
+ -----------------------------------------------------------------------------}
+
+
+defaultHeader :: Text -> Widget
+defaultHeader sessionUserId = do
+    setTitle title
+    addScriptRemote "http://code.jquery.com/jquery-2.1.3.min.js"
+    toWidgetHead [hamlet| 
+        $doctype 5
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"> |]
+    [whamlet|<script> var sessionUserId = "#{sessionUserId}"; |]
+    [whamlet| ^{defaultCSS} |]
+    [whamlet| <div ."titleClass" id="title">#{title} |]
+
+
+tabRow :: String -> [Entity Workspace] -> String -> Widget
+tabRow currentWs wsList role = do 
+    $(widgetFile "tabRowJS")
+    [whamlet|
+    <table id="tabTable">
+        <tbody>
+            <tr>
+                <td id="tabTd">
+                    <a ."tabClassArrow" id="tabLeft" onclick="previousTab();"><-
+                    $forall Entity _ ws <- wsList
+                        $if currentWs == unpack (workspaceName ws)
+                             <a ."tabClassActive" href="/ws/#{workspaceName ws}">#{workspaceName ws}
+                        $else
+                            <a ."tabClass" href="/ws/#{workspaceName ws}">#{workspaceName ws}
+                    <a ."tabClassArrow" id="tabRight" onclick="nextTab();">->
+                <td>
+                    <a id="logoutLink" href="/logout">Logout
+                    <a id="myUserLink" href="/myuser">My Profile
+                    <a id="newWsLink" href="/newws">New Workspace
+                    $if role == "Admin"
+                        <a id="newUserLink" href="/newuser">New User
+                    <a id="homeLink" href="/">Home
+|]
+
+
+defaultFooter :: Widget
+defaultFooter = do
+    mmsg <- getMessage
+    case mmsg of
+        Nothing     -> [whamlet| <div ."footerClass" id="footer">&nbsp; |]
+        Just msg    -> [whamlet| <div ."footerClass" id="footer">#{msg} |]
+
+
+userForm :: Html -> MForm Handler (FormResult User, Widget)
+userForm = renderDivs $ (\id pw -> User id pw "")
+    <$> areq textField "UserId" Nothing
+    <*> areq passwordField "Password" Nothing
+
+
+userNewForm :: Widget
+userNewForm = do [whamlet|
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <form method=post>
+                        <div>
+                            <label for="userId">UserId
+                            <input type="text" name="userId" id="userId" required>
+                        <div>
+                            <label for="role">Role
+                            <select name="role" id="role">
+                                <option name="User" value="User">User
+                                <option name="Admin" value="Admin">Admin
+                        <div>
+                            <input type="submit" ."btn" id="save" name="save" value="Save">
+                            <input type="submit" ."btn" id="saveAndNew" name="saveAndNew" value="Save & New">
+|]
+
+
+userEditForm :: String -> String -> Widget
+userEditForm userId role = do [whamlet|
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <form method=post>
+                        <div>
+                            <label for="userId">UserId
+                            <input type="text" name="userId" id="userId" value="#{userId}" DISABLED>
+                        <div>
+                            <label for="role">Role
+                            <select name="role" id="role">
+                                $if role == "User"
+                                    <option name="User" value="User" selected="selected">User
+                                $else
+                                    <option name="User" value="User">User
+                                $if role == "Admin"
+                                    <option name="Admin" value="Admin" selected="selected">Admin
+                                $else
+                                    <option name="Admin" value="Admin">Admin
+                        <div>
+                            <input type="submit" ."btn" id="saveUser" name="save" value="Update Role">
+                <td>
+                    <form method=get action=/user/#{userId}/pw>
+                        <div><input style="visibility: hidden">
+                        <div><input style="visibility: hidden">
+                        <div>
+                            <input type="submit" ."btnLong" id="resetPassword" name="resetPassword" value="Reset Password">
+                <td>
+                    <form method=get action=/user/#{userId}/delete>
+                        <div><input style="visibility: hidden">
+                        <div><input style="visibility: hidden">
+                        <div>
+                            <input type="submit" ."btnLong" id="deleteUser" name="deleteUser" value="Delete User">
+|]
+
+
+myUserForm :: String -> String -> Widget
+myUserForm userId role = do [whamlet|
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <form>
+                        <div>
+                            <label for="userId">UserId
+                            <input type="text" name="userId" id="userId" value="#{userId}" DISABLED>
+                        <div>
+                            <label for="role">Role
+                            <input type="text" name="role" id="role" value="#{role}" DISABLED>
+                        <div>
+                            <input style="visibility: hidden">
+                <td>
+                    <form method=post>
+                        <div>
+                            <label ."longLabel" for="newPassword">New Password
+                            <input type="password" name="newPassword" id="newPassword" required>
+                        <div>
+                            <label ."longLabel" for="newPasswordR">Repeat New Password
+                            <input type="password" name="newPasswordR" id="newPasswordR" required>
+                        <div>
+                            <input type="submit" ."btnLong" id="setPassword" name="setPassword" value="Change Password">
+|]
+
+
+workspaceForm :: Html -> MForm Handler (FormResult Workspace, Widget)
+workspaceForm = renderDivs $ (\name -> Workspace name "" "0" "")
+    <$> areq shortTextField "Name" Nothing
+    where
+        shortTextField = check validateLength textField
+        validateLength t
+            | Data.Text.length t > 20 = Left ("The maximum length for a Workspace Name is 20 characters." :: Text)
+            | otherwise     = Right t
+
+
+workspaceWorkForm :: Workspace -> String -> Widget
+workspaceWorkForm (Workspace name note status assignee) right = do 
+    $(widgetFile "workspaceJS")
+    $(widgetFile "tabIndentJS")
+    [whamlet|
+    <table id="workspaceTable">
+        <tbody>
+            <tr>
+                <td>
+                    <form method=post>
+                        <input type="text" id="workspaceName" style="display: none;" value="#{name}">
+                        <input type="text" id="workspaceStatus" style="display: none;" value="#{status}">
+                        <input type="text" id="workspaceAssignee" style="display: none;" value="#{assignee}">
+                        <textarea name="noteArea" id="noteArea">#{note}
+                        <input type="text" id="right" style="display: none;" value="#{right}">
+                        <input type="submit" ."btn" id="getSubmit" name="get" value="Get">
+                        $if right /= "ReadOnly"
+                            <input type="submit" ."btn" id="checkInSubmit" name="checkIn" value="Check In">
+                            <input type="submit" ."btn" id="checkOutSubmit" name="checkOut" value="Check Out">
+                        $if right == "Admin"
+                            <input type="submit" ."adminBtn" id="deleteSumbit" name="delete" value="Delete">
+                            <input type="submit" ."adminBtn" id="discardCheckOutSubmit" name="discardCheckOut" value="Discard CO">
+|]
+
+
+
+{-----------------------------------------------------------------------------
+ -----------------------------------------------------------------------------
+ - css widget ----------------------------------------------------------------
+ -----------------------------------------------------------------------------
+ -----------------------------------------------------------------------------}
+
+
+defaultCSS :: Widget
+defaultCSS = toWidgetHead defaultCSSL
+

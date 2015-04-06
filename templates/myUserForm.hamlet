@@ -1,0 +1,23 @@
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <form>
+                    <div>
+                        <label for="userId">UserId
+                        <input type="text" name="userId" id="userId" value="#{userId}" DISABLED>
+                    <div>
+                        <label for="role">Role
+                        <input type="text" name="role" id="role" value="#{role}" DISABLED>
+                    <div>
+                        <input style="visibility: hidden">
+            <td>
+                <form method=post>
+                    <div>
+                        <label ."longLabel" for="newPassword">New Password
+                        <input type="password" name="newPassword" id="newPassword" required>
+                    <div>
+                        <label ."longLabel" for="newPasswordR">Repeat New Password
+                        <input type="password" name="newPasswordR" id="newPasswordR" required>
+                    <div>
+                        <input type="submit" ."btnLong" id="setPassword" name="setPassword" value="Change Password">

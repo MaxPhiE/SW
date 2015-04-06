@@ -1,0 +1,19 @@
+User
+    userId Text
+    password Text
+    role Text
+    UniqueUserId userId
+Workspace
+    name Text
+    note Text
+    status Text
+    assignee Text
+    UniqueName name
+Assignment
+    userId UserId
+    workspaceId WorkspaceId
+    right Text
+    wsOrder Text
+    UniqueUserWorkspace userId workspaceId
+
+ -- By default this file is used in Model.hs (which is imported by Foundation.hs)

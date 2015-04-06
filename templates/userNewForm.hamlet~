@@ -1,0 +1,16 @@
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<form method=post>
+					<div>
+						<label for="userId">UserId
+						<input type="text" name="userId" id="userId" required>
+					<div>
+						<label for="role">Role
+						<select name="role" id="role">
+							<option name="User" value="User">User
+							<option name="Admin" value="Admin">Admin
+					<div>
+						<input type="submit" ."btn" id="save" name="save" value="Save">
+						<input type="submit" ."btn" id="saveAndNew" name="saveAndNew" value="Save & New">

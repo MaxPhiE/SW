@@ -1,0 +1,33 @@
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <form method=post>
+                    <div>
+                        <label for="userId">UserId
+                        <input type="text" name="userId" id="userId" value="#{userId}" DISABLED>
+                    <div>
+                        <label for="role">Role
+                        <select name="role" id="role">
+                            $if role == "User"
+                                <option name="User" value="User" selected="selected">User
+                            $else
+                                <option name="User" value="User">User
+                            $if role == "Admin"
+                                <option name="Admin" value="Admin" selected="selected">Admin
+                            $else
+                                <option name="Admin" value="Admin">Admin
+                    <div>
+                        <input type="submit" ."btn" id="saveUser" name="save" value="Update Role">
+            <td>
+                <form method=get action=/user/#{userId}/pw>
+                    <div><input style="visibility: hidden">
+                    <div><input style="visibility: hidden">
+                    <div>
+                        <input type="submit" ."btnLong" id="resetPassword" name="resetPassword" value="Reset Password">
+            <td>
+                <form method=get action=/user/#{userId}/delete>
+                    <div><input style="visibility: hidden">
+                    <div><input style="visibility: hidden">
+                    <div>
+                        <input type="submit" ."btnLong" id="deleteUser" name="deleteUser" value="Delete User">

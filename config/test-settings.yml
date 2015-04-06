@@ -1,0 +1,2 @@
+database:
+  database: SharedWorkspace_test.sqlite3

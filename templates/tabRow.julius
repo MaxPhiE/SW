@@ -1,0 +1,70 @@
+    var tabs = $("#tabTd > a");
+    var numberOfTabs = tabs.length;
+    var indexActiveTab = 0;
+    var isCmd = false;
+    var isAlt = false;
+    var cmdKey = "Meta";        // cmd key
+    var altKey = "Alt";         // alt key
+    var nextKey = "ArrowDown";  // down arrow
+    var prevKey = "ArrowUp";    // up arrow
+    
+    $(document).keyup(function(event) {
+        if(event.key == cmdKey) isCmd = false;
+        if(event.key == altKey) isAlt = false;
+    });
+    $(document).keydown(function(event) {
+        if(event.key == cmdKey) isCmd = true;
+        if(event.key == altKey) isAlt = true;
+        if(event.key == nextKey && isCmd == true && isAlt == true) {
+            nextTab();
+            return false;
+        } else if(event.key == prevKey && isCmd == true && isAlt == true) {
+            previousTab();
+            return false;
+        }
+    });
+    
+    
+    function hideTabs() {
+    
+        if(document.getElementsByClassName("tabClassActive").length > 0) {
+            while(tabs[indexActiveTab].className != "tabClassActive" && tabs[indexActiveTab+1]) {
+                indexActiveTab++;
+            }
+        }
+        
+        for(var i=1; i < numberOfTabs-1; i++) {
+            if(i < indexActiveTab-4 || i > Math.max(indexActiveTab,5)) {
+                tabs[i].style.display = "none";
+            } else {
+                tabs[i].style.display = "inline-block";
+            }
+        }
+        
+        if(indexActiveTab == numberOfTabs-2) {
+            document.getElementById("tabRight").style.visibility = "hidden";
+        } else {
+            document.getElementById("tabRight").style.visibility = "visible";
+        }
+        if(indexActiveTab <= 1) {
+            document.getElementById("tabLeft").style.visibility = "hidden";
+        } else {
+            document.getElementById("tabLeft").style.visibility = "visible";
+        }
+    }
+    
+    function nextTab() {
+        if(indexActiveTab < numberOfTabs - 2) {
+            indexActiveTab++;
+            window.location = "/ws/" + tabs[indexActiveTab].innerHTML;
+        }
+    }
+    
+    function previousTab() {
+        if(indexActiveTab > 1) {
+            indexActiveTab--;
+            window.location = "/ws/" + tabs[indexActiveTab].innerHTML;
+        }
+    }
+    
+    hideTabs();

@@ -1,0 +1,43 @@
+    function moveUp() {
+        $("#workspaceOrder option:selected").each( function() {
+            var newPos = $("#workspaceOrder option").index(this) - 1;
+            if (newPos > -1) {
+                $("#workspaceOrder option").eq(newPos).before("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+                $(this).remove();
+            }
+        });
+    }
+    
+    function moveDown() {
+        var countOptions = $("#workspaceOrder option").size();
+        $("#workspaceOrder option:selected").each( function() {
+            var newPos = $("#workspaceOrder option").index(this) + 1;
+            if (newPos < countOptions) {
+                $("#workspaceOrder option").eq(newPos).after("<option value='"+$(this).val()+"' selected='selected'>"+$(this).text()+"</option>");
+                $(this).remove();
+            }
+        });
+    }
+    
+    function saveWSOrder() {
+        var i = 0;
+        var wsOrder = "";
+        
+        $("#workspaceOrder option").each( function() {
+            wsOrder += $(this).val() + "&" + i + "&";
+            i++;
+        });
+        
+        try {
+            $.ajax ({
+                type        : "POST",
+                url         : "/ws/order/" + encodeURIComponent(wsOrder)
+            }).done(function(data) {
+                alert("New Order Saved.")
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                alert("Error: " + jqXHR.status + " - " + errorThrown + ". ");
+            });
+        } catch (e) {
+            console.log("Error: " + e);
+        }
+    }

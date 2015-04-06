@@ -1,0 +1,28 @@
+module Handler.ResetPassword where
+
+import Import
+
+getResetPasswordR :: Text -> Handler Html
+getResetPasswordR requestedUserId = do
+    clearUltDest
+    sessionUserIdM <- lookupSession "userId"
+    case sessionUserIdM of
+        Nothing             -> do
+            setUltDestCurrent
+            redirect LoginR
+        Just sessionUserId  -> do
+            uid <- runDB $ getBy $ UniqueUserId sessionUserId
+            case uid of
+                Nothing -> do
+                    setMessage "Unexpected error. (WS-001)"
+                    redirect LoginR
+                Just u  -> do
+                    let role = unpack $ userRole $ entityVal u
+                    if role /= "Admin"
+                        then do
+                            setMessage "You don't have the privilege to reset the password for an user."
+                            redirect HomeR
+                        else do
+                            runDB $ updateWhere [UserUserId ==. requestedUserId] [UserPassword =. requestedUserId]
+                            setMessage "Password reseted"
+                            redirect $ UserR requestedUserId
