@@ -1,4 +1,4 @@
-    var wsId = "";
+var wsId = "";
     var right = "";
     var status = "";
     var assignee = "";
@@ -45,7 +45,7 @@
         }).done(function(data) {
             document.getElementById("footer").innerHTML = data.statusMsg;
         
-            if(data.statusCode == "000") {
+            if(data.myStatusCode == "000") {
                 document.getElementById("noteArea").value = data.workspace.note;
                 
                 if(action == "checkOut") {
@@ -68,11 +68,11 @@
         }).done(function(data) {
             document.getElementById("footer").innerHTML = data.statusMsg;
             
-            if(data.statusCode == "000" && action == "checkIn") {
+            if(data.myStatusCode == "000" && action == "checkIn") {
                 document.getElementById("workspaceAssignee").value = "";
                 document.getElementById("workspaceStatus").value = "0";
                 setNoteAreaReadOnly();
-            } else if(data.statusCode != "000") {
+            } else if(data.myStatusCode != "000") {
                 alert(data.statusMsg);
             }
         }).fail(function(jqXHR, textStatus, errorThrown) {
@@ -112,19 +112,4 @@
         } else {
             setNoteAreaEdit();
         }
-        
-        $("textarea").keydown(function(event) {
-            if(event.key == "Tab" && !isCtrl) {
-                var start = this.selectionStart;
-                var end = this.selectionEnd;
-
-                var target = event.target;
-                var value = target.value;
-
-                target.value = value.substring(0, start) + "\t" + value.substring(end);
-                this.selectionStart = this.selectionEnd = start + 1;
-
-                event.preventDefault();
-            }
-        });
     }

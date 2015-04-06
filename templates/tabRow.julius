@@ -1,12 +1,12 @@
-    var tabs = $("#tabTd > a");
+var tabs = $("#tabTd > a");
     var numberOfTabs = tabs.length;
     var indexActiveTab = 0;
     var isCmd = false;
     var isAlt = false;
     var cmdKey = "Meta";        // cmd key
     var altKey = "Alt";         // alt key
-    var nextKey = "ArrowDown";  // down arrow
-    var prevKey = "ArrowUp";    // up arrow
+    var nextKey = "Down";  // down arrow
+    var prevKey = "Up";    // up arrow
     
     $(document).keyup(function(event) {
         if(event.key == cmdKey) isCmd = false;

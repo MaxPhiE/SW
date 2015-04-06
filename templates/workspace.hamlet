@@ -1,17 +1,17 @@
-<table id="workspaceTable">
-    <tbody>
-        <tr>
-            <td>
-                <form method=post>
-                    <input type="text" id="workspaceName" style="display: none;" value="#{name}">
-                    <input type="text" id="workspaceStatus" style="display: none;" value="#{status}">
-                    <input type="text" id="workspaceAssignee" style="display: none;" value="#{assignee}">
-                    <textarea name="noteArea" id="noteArea">#{note}
-                    <input type="text" id="right" style="display: none;" value="#{right}">
-                    <input type="submit" ."btn" id="getSubmit" name="get" value="Get">
-                    $if right /= "ReadOnly"
-                        <input type="submit" ."btn" id="checkInSubmit" name="checkIn" value="Check In">
-                        <input type="submit" ."btn" id="checkOutSubmit" name="checkOut" value="Check Out">
-                    $if right == "Admin"
-                        <input type="submit" ."adminBtn" id="deleteSumbit" name="delete" value="Delete">
-                        <input type="submit" ."adminBtn" id="discardCheckOutSubmit" name="discardCheckOut" value="Discard CO">
+    <table id="workspaceTable">
+        <tbody>
+            <tr>
+                <td>
+                    <form method=post>
+                        <input type="text" id="workspaceName" style="display: none;" value="#{name}">
+                        <input type="text" id="workspaceStatus" style="display: none;" value="#{status}">
+                        <input type="text" id="workspaceAssignee" style="display: none;" value="#{assignee}">
+                        <textarea name="noteArea" id="noteArea">#{note}
+                        <input type="text" id="right" style="display: none;" value="#{right}">
+                        <input type="submit" ."btn" id="getSubmit" name="get" value="Get">
+                        $if right /= "ReadOnly"
+                            <input type="submit" ."btn" id="checkInSubmit" name="checkIn" value="Check In">
+                            <input type="submit" ."btn" id="checkOutSubmit" name="checkOut" value="Check Out">
+                        $if right == "Admin"
+                            <input type="submit" ."adminBtn" id="deleteSumbit" name="delete" value="Delete">
+                            <input type="submit" ."adminBtn" id="discardCheckOutSubmit" name="discardCheckOut" value="Discard CO">
